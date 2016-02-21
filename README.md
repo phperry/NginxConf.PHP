@@ -182,9 +182,6 @@ $location->AddDirective('index', array('index.php', 'index.html', 'index.htm'));
 # add the location to the server directive
 $location->AddTo($conf['server']);
 
-# save
-$conf->Save('example.org.conf');
-
 # get as string
 $string = $conf->GetAsString();
 
@@ -192,5 +189,5 @@ $string = $conf->GetAsString();
 var_dump($string);
 
 # or save
-# $conf->Save('newFileName.conf');
+# $conf->Save('example.org.conf');
 ```
