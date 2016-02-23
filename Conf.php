@@ -3,7 +3,7 @@ namespace Nemiro\Nginx
 {
 
   /*
-   * Copyright © Aleksey Nemiro, 2015. All rights reserved.
+   * Copyright © Aleksey Nemiro, 2015-2016. All rights reserved.
    * 
    * Licensed under the Apache License, Version 2.0 (the "License");
    * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace Nemiro\Nginx
    * 
    * @author      Aleksey Nemiro <aleksey@nemiro.ru>
    * @copyright   © Aleksey Nemiro, 2015. All rights reserved.
-   * @version     1.0 (2015-10-24) / PHP 5 >= 5.5 / Nginx >= 1.9
+   * @version     1.1 (2016-02-23) / PHP 5 >= 5.5 / PHP 7 >= 7.0 / Nginx >= 1.9
    * @code
    * ########################################################################
    * # The following example shows how to work with 
@@ -138,22 +138,10 @@ namespace Nemiro\Nginx
 
       $this->Path = $path;
       
-      if (($path != NULL && $path != '') || !file_exists($path))
+      if ($path != NULL && $path != '' && file_exists($path))
       {
         // get file
         $content = file_get_contents($this->Path);
-
-        // TODO: There may be potential error. Check it.
-        // masked \#
-        $content = preg_replace('/(\\\#)/', chr(1), $content);
-
-        // remove comments
-        $content = preg_replace('/(\#([^\r\n]+))/', '', $content);
-
-        // restore \#
-        $content = preg_replace('/\x01/', '\#', $content);
-        // --
-
         // parse
         $this->ParseString($content);
       }
@@ -169,6 +157,22 @@ namespace Nemiro\Nginx
      */
     public function ParseString($source)
     {
+      if (!isset($source) || $source == '')
+      {
+        return;
+      }
+
+      // TODO: There may be potential error. Check it.
+      // masked \#
+      $source = preg_replace('/(\\\#)/', chr(1), $source);
+
+      // remove comments
+      $source = preg_replace('/(\#([^\r\n]*))/', '', $source);
+
+      // restore \#
+      $source = preg_replace('/\x01/', '\#', $source);
+
+      // parse
       $this->Parse($this, $source, 0);
     }
     
